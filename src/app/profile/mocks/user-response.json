@@ -1,5 +1,24 @@
 {
-  "id": 1,
-  "first_name": "Steve",
-  "last_name": "Jobs"
+  "id": 101,
+  "firstName": "Alice",
+  "lastName": "Johnson",
+  "province": {
+    "nombre": "Ontario"
+  },
+  "locality": {
+    "nombre": "Downtown"
+  },
+  "currentTechnology": "Angular",
+  "referent": "Michael Smith",
+  "talentPartner": "Sarah Williams",
+  "projects": [
+    {
+      "id": 1,
+      "name": "E-commerce Platform"
+    },
+    {
+      "id": 2,
+      "name": "Internal Dashboard"
+    }
+  ]
 }

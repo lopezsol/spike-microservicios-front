@@ -30,9 +30,9 @@
   <div class="col-md-4 mb-3">
     <label for="province" class="form-label text-primary">Provincia</label>
     <select class="form-select" formControlName="province">
-      <option value="">--Choose an option--</option>
-      @for (province of provinces; track province; let index = $index) {
-      <option>{{ province }}</option>
+      <option value="">Elige una opción</option>
+      @for (province of provinces; track province.id) {
+      <option>{{ province.nombre }}</option>
       }
     </select>
   </div>
@@ -40,9 +40,9 @@
   <div class="col-md-4 mb-3">
     <label for="locality" class="form-label text-primary">Localidad</label>
     <select class="form-select" formControlName="locality">
-      <option value="">--Choose an option--</option>
-      @for (locality of localities; track locality; let index = $index) {
-      <option>{{ locality }}</option>
+      <option value="">Elige una opción</option>
+      @for (locality of localities; track locality.id) {
+      <option>{{ locality.nombre }}</option>
       }
     </select>
   </div>
@@ -97,12 +97,12 @@
   </div>
 
   <div class="col-md-6 mb-3">
-    <label for="supervisor" class="form-label text-primary">Referente</label>
+    <label for="referent" class="form-label text-primary">Referente</label>
     <input
       type="text"
       class="form-control"
       placeholder="Javi"
-      formControlName="supervisor"
+      formControlName="referent"
     />
     <!-- @if ( formUtils.isInvalidField(registerForm, 'name')) {
     <app-error-message-form
