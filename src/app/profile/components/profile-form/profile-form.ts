@@ -13,7 +13,7 @@ import { UserService } from '../../services/user.service';
 import { switchMap, tap } from 'rxjs';
 import { Locality } from '../../../shared/interfaces/locality.interface';
 import { GeorefService } from '../../../shared/services/georef.service';
-import { ProjectService } from '../../services/project.service';
+import { ProjectService } from '../../../shared/services/project.service';
 import { Project } from '../../../shared/interfaces/project.interface';
 
 @Component({
