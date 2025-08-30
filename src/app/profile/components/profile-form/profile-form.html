@@ -31,8 +31,8 @@
     <label for="province" class="form-label text-primary">Provincia</label>
     <select class="form-select" formControlName="province">
       <option value="">Elige una opción</option>
-      @for (province of provinces; track province.id) {
-      <option>{{ province.nombre }}</option>
+      @for (province of provinces(); track province.id) {
+      <option [value]="province.id">{{ province.nombre }}</option>
       }
     </select>
   </div>
@@ -41,8 +41,8 @@
     <label for="locality" class="form-label text-primary">Localidad</label>
     <select class="form-select" formControlName="locality">
       <option value="">Elige una opción</option>
-      @for (locality of localities; track locality.id) {
-      <option>{{ locality.nombre }}</option>
+      @for (locality of localitiesByProvince(); track locality.id) {
+      <option [value]="locality.id">{{ locality.nombre }}</option>
       }
     </select>
   </div>
