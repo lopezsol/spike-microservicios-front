@@ -47,19 +47,14 @@
     </select>
   </div>
 
-  <div class="col-md-6 mb-3">
+  <div class="col-md-4 mb-3">
     <label for="project" class="form-label text-primary">Proyecto</label>
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Trenes"
-      formControlName="project"
-    />
-    <!-- @if ( formUtils.isInvalidField(registerForm, 'name')) {
-    <app-error-message-form
-      [$message]="formUtils.getFieldError(registerForm, 'name')!"
-    />
-    } -->
+    <select class="form-select" formControlName="project">
+      <option value="">Elige una opción</option>
+      @for (project of projects(); track project.id) {
+      <option [value]="project.id">{{ project.name }}</option>
+      }
+    </select>
   </div>
 
   <div class="col-md-6 mb-3">

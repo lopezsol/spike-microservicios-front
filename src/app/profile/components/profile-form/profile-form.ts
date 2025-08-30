@@ -1,4 +1,11 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from '../../interfaces/user.interface';
 import { UserResponse } from '../../interfaces/user-response.interface';
@@ -6,6 +13,8 @@ import { UserService } from '../../services/user.service';
 import { switchMap, tap } from 'rxjs';
 import { Locality } from '../../../shared/interfaces/locality.interface';
 import { GeorefService } from '../../../shared/services/georef.service';
+import { ProjectService } from '../../services/project.service';
+import { Project } from '../../../shared/interfaces/project.interface';
 
 @Component({
   selector: 'profile-form',
@@ -16,13 +25,20 @@ import { GeorefService } from '../../../shared/services/georef.service';
 export class ProfileFormComponent {
   private fb = inject(FormBuilder);
   georefService = inject(GeorefService);
-  user = input.required<UserResponse>();
+  projectService = inject(ProjectService);
   userService = inject(UserService);
+
+  user = input.required<UserResponse>();
   isLoading = signal(false);
   editMode = signal(false);
   updatedUser = signal<UserResponse | null>(null);
   provinces = signal<Province[]>([]);
   localitiesByProvince = signal<Locality[]>([]);
+  projects = signal<Project[]>([]);
+  lastProject = computed(() => {
+    const projects = this.user()?.projects;
+    return projects ? projects[projects.length - 1] : undefined;
+  });
 
   profileForm = this.fb.group({
     firstName: [
@@ -36,12 +52,8 @@ export class ProfileFormComponent {
     technology: [
       '',
       [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
-      // technology: this.fbarray([])
     ],
-    project: [
-      '',
-      [Validators.required, Validators.minLength(4), Validators.maxLength(75)],
-    ],
+    project: [''],
     province: [''],
     locality: [''],
     talent_partner: [
@@ -56,7 +68,7 @@ export class ProfileFormComponent {
 
   ngOnInit() {
     this.fetchProvinces();
-
+    this.fetchProjects();
     const user = this.user();
     if (user.province?.id) {
       this.georefService
@@ -70,15 +82,13 @@ export class ProfileFormComponent {
   }
 
   setFormValue(user: UserResponse) {
+    console.log('proyecto en el form: ', this.lastProject()?.id || '');
     this.profileForm.reset(
       {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         technology: user.currentTechnology || '',
-        project:
-          user.projects && user.projects.length > 0
-            ? user.projects[0].name
-            : '',
+        project: this.lastProject()?.id.toString() || '',
         talent_partner: user.talentPartner || '',
         referent: user.referent || '',
         province: user.province?.id.toString() || '',
@@ -91,6 +101,7 @@ export class ProfileFormComponent {
   onSubmit() {
     console.log('on submit');
     this.profileForm.markAllAsTouched();
+    console.log(this.profileForm.errors);
     if (!this.profileForm.valid) return;
     console.log('finalizado onSubmit');
     const updatedUser = this.createUserForm();
@@ -115,8 +126,6 @@ export class ProfileFormComponent {
   }
 
   createUserForm(): User {
-    // const formValue = this.profileForm.getRawValue();
-
     const {
       firstName = '',
       lastName = '',
@@ -133,9 +142,7 @@ export class ProfileFormComponent {
       idLocality: this.profileForm.value.locality
         ? +this.profileForm.value.locality
         : undefined,
-      //TODO: GRAVE PROBLEMA UWU
-      // idsProject: project ?? undefined,
-      idsProject: [1, 2],
+      idsProject: this.getProjectsId(),
       idProvince: this.profileForm.value.province
         ? +this.profileForm.value.province
         : undefined,
@@ -146,8 +153,22 @@ export class ProfileFormComponent {
     return user;
   }
 
+  getProjectsId() {
+    const selectedProject = this.profileForm.get('project')?.value;
+    const userProjects =
+      this.user().projects?.map((project) => project.id) || [];
+    if (selectedProject && !userProjects.includes(+selectedProject)) {
+      userProjects.push(+selectedProject);
+    }
+
+    return userProjects;
+  }
   fetchProvinces() {
     this.georefService.getAllProvinces().subscribe(this.provinces.set);
+  }
+
+  fetchProjects() {
+    this.projectService.getAllProjects().subscribe(this.projects.set);
   }
 
   onFormChanged = effect((onCleanup) => {
@@ -161,20 +182,16 @@ export class ProfileFormComponent {
     return this.profileForm
       .get('province')!
       .valueChanges.pipe(
-        tap((province) => console.log('valor province:', province)),
         tap(() => this.profileForm.get('locality')!.setValue('')),
         tap(() => this.localitiesByProvince.set([])),
         switchMap((province) => {
           if (!province) {
-            console.log('province vacío, no llamo al back');
             return [];
           }
-          console.log('voy a llamar al back con id:', province);
           return this.georefService.getLocalitiesByProvinceId(+province);
         })
       )
       .subscribe((localities) => {
-        console.log('localidades recibidas:', localities);
         this.localitiesByProvince.set(localities);
       });
   }

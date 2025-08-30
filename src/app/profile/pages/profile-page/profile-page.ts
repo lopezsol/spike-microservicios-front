@@ -15,7 +15,12 @@ export class ProfilePageComponent {
   isLoading = signal(false);
   editMode = signal(false);
   user = signal<UserResponse | null>(null);
-  firstProject = computed(() => this.user()?.projects?.[0]);
+  lastProject = computed(
+    () => {
+      const projects = this.user()?.projects;
+      return projects ? projects[projects.length - 1] : undefined;
+    }
+  );
 
   ngOnInit() {
     this.fetchUser();
