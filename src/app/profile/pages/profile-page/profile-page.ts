@@ -4,9 +4,11 @@ import { User } from '../../interfaces/user.interface';
 import { ProfileFormComponent } from '../../components/profile-form/profile-form';
 import userResponse from '../../mocks/user-response.json';
 import { UserResponse } from '../../interfaces/user-response.interface';
+import { RouterLink } from '@angular/router';
+import { BottomNavComponent } from "../../../shared/components/bottom-nav/bottom-nav.component";
 @Component({
   selector: 'app-profile-page',
-  imports: [ProfileFormComponent],
+  imports: [ProfileFormComponent, RouterLink, BottomNavComponent],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css',
 })

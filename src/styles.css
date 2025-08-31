@@ -4,6 +4,17 @@
 
 /* Opcional: definís tu tema */
 @theme {
-  --color-primary: #2563eb; /* azul */
-  --color-secondary: #f59e0b; /* amber */
+  --color-primary: rgba(15, 23, 35, 1);
+  --color-secondary: #f59e0b;
+  --color-moby: rgba(1, 145, 193, 1);
+  --color-container: rgba(245, 245, 245, 1);
+}
+
+button.p-button {
+  background-color: var(--color-moby);
+  border-color: var(--color-moby);
+  padding: 12px 0px;
+  &:hover {
+    background-color: var(--color-moby);
+  }
 }

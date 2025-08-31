@@ -5,3 +5,32 @@
 button {
   cursor: pointer;
 }
+
+input, p-select {
+  background-color: rgba(228, 231, 240, 1);
+}
+
+label {
+  font-weight: 600;
+  font-size: 22px;
+}
+
+/* Texto seleccionado dentro del select */
+.p-dropdown-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Opciones dentro del panel */
+.p-dropdown-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Opcional: que el panel no se pase del ancho del contenedor */
+.p-dropdown-panel {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}

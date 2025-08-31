@@ -1,19 +1,32 @@
 @if (editMode()) {
-<profile-form [user]="user()!" />
+<profile-form [user]="user()!" (cancelEditMode)="editMode.set(false)" />
 } @else {
-  <div class="flex flex-col h-screen bg-gray-50">
-  <header class="relative w-full px-4 py-3 flex items-center justify-center border-b border-gray-200">
+<div class="flex flex-col h-screen bg-container py-10">
+  <header class="relative w-full px-4 flex items-center justify-center">
     <button class="absolute left-4 top-1/2 -translate-y-1/2">
-      <i class="fa-regular fa-circle-left fa-2xl" style="color: #0191c1;"></i>
+      <i class="fa-solid fa-circle-left fa-xl" style="color: #0191c1"></i>
     </button>
-    <h1 class="text-center text-gray-900 text-3xl font-bold leading-9">Mi Perfil</h1>
+    <h1 class="text-center text-gray-900 text-3xl font-bold leading-9">
+      Mi Perfil
+    </h1>
   </header>
 
-  <section class="flex-1 flex flex-col items-center justify-start py-7 space-y-7 overflow-y-auto">
+  <section
+    class="flex-1 flex flex-col items-center justify-start py-7 space-y-7 overflow-y-auto"
+  >
     <div class="relative h-72 flex flex-col items-center">
-      <div class="w-44 h-44 rounded-full border-2 moby flex items-center justify-center">
+      <div
+        class="w-44 h-44 rounded-full border-2 moby flex items-center justify-center"
+      >
+        <img
+          class="w-40 h-40 rounded-full object-cover"
+          src="steve_jobs.jpg"
+          [alt]="`Imagen de perfil del usuario ${user()?.firstName}`"
+        />
       </div>
-      <button class="absolute right-10 bottom-32 w-10 h-10 rounded-full flex items-center justify-center">
+      <button
+        class="absolute right-10 bottom-32 w-10 h-10 rounded-full flex items-center justify-center"
+      >
         <i class="fa-regular fa-pen-to-square" style="color: #0191c1"></i>
       </button>
       <div
@@ -59,30 +72,6 @@
     </button>
   </section>
 
-  <footer
-    class="fixed bottom-0 left-0 w-full h-20 border-t-[0.33px] border-gray-200/30 overflow-hidden backdrop-blur-xl bg-white/75 flex justify-around items-center py-1.5"
-  >
-    <nav class="flex-1 flex justify-around items-center h-full">
-      <button class="flex-1 flex flex-col items-center">
-        <i class="fa-regular fa-house" style="color: #aaacb2"></i>
-        <div class="text-gray-400 text-[10px]">Inicio</div>
-      </button>
-
-      <button class="flex-1 flex flex-col items-center">
-        <i class="fa-regular fa-bell" style="color: #aaacb2"></i>
-        <div class="text-gray-400 text-[10px]">Novedades</div>
-      </button>
-
-      <button class="flex-1 flex flex-col items-center">
-        <i class="fa-regular fa-calendar" style="color: #aaacb2"></i>
-        <div class="text-gray-400 text-[10px]">Agenda</div>
-      </button>
-
-      <button class="flex-1 flex flex-col items-center">
-        <i class="fa-regular fa-user" style="color: #0191c1"></i>
-        <div class="moby text-[10px]">Perfil</div>
-      </button>
-    </nav>
-  </footer>
+  <app-bottom-nav />
 </div>
 }
