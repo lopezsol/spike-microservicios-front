@@ -1,28 +1,26 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { User } from '../../interfaces/user.interface';
+import { ToastService } from '../../../shared/services/toast.service';
 import { ProfileFormComponent } from '../../components/profile-form/profile-form';
-import userResponse from '../../mocks/user-response.json';
-import { UserResponse } from '../../interfaces/user-response.interface';
-import { RouterLink } from '@angular/router';
-import { BottomNavComponent } from "../../../shared/components/bottom-nav/bottom-nav.component";
+import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
+import type { UserResponse } from '../../interfaces/user-response.interface';
 @Component({
   selector: 'app-profile-page',
-  imports: [ProfileFormComponent, RouterLink, BottomNavComponent],
+  imports: [ProfileFormComponent, BottomNavComponent],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css',
 })
 export class ProfilePageComponent {
   userService = inject(UserService);
+  toastService = inject(ToastService); 
   isLoading = signal(false);
   editMode = signal(false);
   user = signal<UserResponse | null>(null);
-  lastProject = computed(
-    () => {
-      const projects = this.user()?.projects;
-      return projects ? projects[projects.length - 1] : undefined;
-    }
-  );
+
+  lastProject = computed(() => {
+    const projects = this.user()?.projects;
+    return projects ? projects[projects.length - 1] : undefined;
+  });
 
   ngOnInit() {
     this.fetchUser();
@@ -34,13 +32,14 @@ export class ProfilePageComponent {
       next: (user) => {
         this.isLoading.set(false);
         this.user.set(user);
-        // this.showSuccess();
       },
       error: (err) => {
         this.isLoading.set(false);
 
         console.error('Error al traer usuario', err);
-        // this.showError();
+        this.toastService.error(
+          'Ocurrio un error trayendo los datos del usuario'
+        );
       },
     });
   }

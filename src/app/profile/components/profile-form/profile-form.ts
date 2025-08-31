@@ -8,20 +8,21 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { User } from '../../interfaces/user.interface';
-import { UserResponse } from '../../interfaces/user-response.interface';
-import { UserService } from '../../services/user.service';
 import { switchMap, tap } from 'rxjs';
-import { Locality } from '../../../shared/interfaces/locality.interface';
-import { GeorefService } from '../../../shared/services/georef.service';
-import { ProjectService } from '../../../shared/services/project.service';
-import { Project } from '../../../shared/interfaces/project.interface';
-import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { UserService } from '../../services/user.service';
+import { GeorefService } from '../../../shared/services/georef.service';
+import { ProjectService } from '../../../shared/services/project.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { BottomNavComponent } from "../../../shared/components/bottom-nav/bottom-nav.component";
+import type { Project } from '../../../shared/interfaces/project.interface';
+import type { User } from '../../interfaces/user.interface';
+import type { UserResponse } from '../../interfaces/user-response.interface';
+import type { Locality } from '../../../shared/interfaces/locality.interface';
+
 @Component({
   selector: 'profile-form',
   imports: [
@@ -46,6 +47,7 @@ export class ProfileFormComponent {
   isLoading = signal(false);
   editMode = signal(false);
   cancelEditMode = output();
+  updateUserEmit = output()
   updatedUser = signal<UserResponse | null>(null);
   provinces = signal<Province[]>([]);
   localitiesByProvince = signal<Locality[]>([]);
@@ -140,6 +142,7 @@ export class ProfileFormComponent {
         this.updatedUser.set(user);
         this.toastService.success('Usuario editado con éxito');
         this.cancelEditMode.emit();
+        this.updateUserEmit.emit()
       },
       error: (err) => {
         this.isLoading.set(false);
