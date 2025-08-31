@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Locality } from '../interfaces/locality.interface';
+import { Province } from '../interfaces/province.interface';
 
 const baseUrl = environment.baseGeorefUrl;
 @Injectable({
