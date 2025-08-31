@@ -17,11 +17,12 @@ import { UserService } from '../../services/user.service';
 import { GeorefService } from '../../../shared/services/georef.service';
 import { ProjectService } from '../../../shared/services/project.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { BottomNavComponent } from "../../../shared/components/bottom-nav/bottom-nav.component";
+import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
 import type { Project } from '../../../shared/interfaces/project.interface';
 import type { User } from '../../interfaces/user.interface';
 import type { UserResponse } from '../../interfaces/user-response.interface';
 import type { Locality } from '../../../shared/interfaces/locality.interface';
+import { Province } from '../../../shared/interfaces/province.interface';
 
 @Component({
   selector: 'profile-form',
@@ -31,8 +32,8 @@ import type { Locality } from '../../../shared/interfaces/locality.interface';
     FormsModule,
     Select,
     ButtonModule,
-    BottomNavComponent
-],
+    BottomNavComponent,
+  ],
   templateUrl: './profile-form.html',
   styleUrl: './profile-form.css',
 })
@@ -47,7 +48,7 @@ export class ProfileFormComponent {
   isLoading = signal(false);
   editMode = signal(false);
   cancelEditMode = output();
-  updateUserEmit = output()
+  updateUserEmit = output();
   updatedUser = signal<UserResponse | null>(null);
   provinces = signal<Province[]>([]);
   localitiesByProvince = signal<Locality[]>([]);
@@ -142,7 +143,7 @@ export class ProfileFormComponent {
         this.updatedUser.set(user);
         this.toastService.success('Usuario editado con éxito');
         this.cancelEditMode.emit();
-        this.updateUserEmit.emit()
+        this.updateUserEmit.emit();
       },
       error: (err) => {
         this.isLoading.set(false);
