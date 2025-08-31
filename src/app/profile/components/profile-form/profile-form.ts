@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { switchMap, tap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,11 +18,12 @@ import { GeorefService } from '../../../shared/services/georef.service';
 import { ProjectService } from '../../../shared/services/project.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import type { Project } from '../../../shared/interfaces/project.interface';
 import type { User } from '../../interfaces/user.interface';
 import type { UserResponse } from '../../interfaces/user-response.interface';
 import type { Locality } from '../../../shared/interfaces/locality.interface';
-import { Province } from '../../../shared/interfaces/province.interface';
+import type { Province } from '../../../shared/interfaces/province.interface';
 
 @Component({
   selector: 'profile-form',
@@ -33,6 +34,7 @@ import { Province } from '../../../shared/interfaces/province.interface';
     Select,
     ButtonModule,
     BottomNavComponent,
+    ProgressSpinner,
   ],
   templateUrl: './profile-form.html',
   styleUrl: './profile-form.css',
@@ -57,6 +59,9 @@ export class ProfileFormComponent {
     const projects = this.user()?.projects;
     return projects ? projects[projects.length - 1] : undefined;
   });
+  isLoadingProvince = signal<boolean>(false);
+  isLoadingLocality = signal<boolean>(false);
+  isLoadingProjects = signal<boolean>(false);
 
   profileForm = this.fb.group({
     firstName: [
@@ -95,13 +100,10 @@ export class ProfileFormComponent {
     this.fetchProjects();
     const user = this.user();
     if (user.province?.id) {
-      this.georefService
-        .getLocalitiesByProvinceId(user.province.id)
-        .subscribe((locs) => {
-          this.localitiesByProvince.set(locs);
-        });
+      this.fetchLocalities(user.province.id).subscribe((locs) => {
+        this.localitiesByProvince.set(locs);
+      });
     }
-
     this.setFormValue(user);
   }
 
@@ -137,6 +139,7 @@ export class ProfileFormComponent {
   }
 
   updateUser(user: User, id: number) {
+    this.isLoading.set(true);
     this.userService.updateUser(user, id).subscribe({
       next: (user) => {
         this.isLoading.set(false);
@@ -193,11 +196,48 @@ export class ProfileFormComponent {
     return userProjects;
   }
   fetchProvinces() {
-    this.georefService.getAllProvinces().subscribe(this.provinces.set);
+    this.isLoadingProvince.set(true);
+    this.georefService.getAllProvinces().subscribe({
+      next: (provinces) => {
+        this.isLoadingProvince.set(false);
+        this.provinces.set(provinces);
+      },
+      error: (err) => {
+        this.isLoadingProvince.set(false);
+
+        console.error('Error al traer las provincias', err);
+        this.toastService.error('Ocurrio un error trayendo las provincias');
+      },
+    });
+  }
+
+  fetchLocalities(id: number) {
+    this.isLoadingLocality.set(true);
+    return this.georefService.getLocalitiesByProvinceId(id).pipe(
+      tap(() => this.isLoadingLocality.set(false)),
+      catchError((err) => {
+        this.isLoadingLocality.set(false);
+        this.toastService.error('Ocurrió un error trayendo las localidades');
+        console.error(err);
+        return of([]);
+      })
+    );
   }
 
   fetchProjects() {
-    this.projectService.getAllProjects().subscribe(this.projects.set);
+    this.isLoadingProjects.set(true);
+    this.projectService.getAllProjects().subscribe({
+      next: (projects) => {
+        this.isLoadingProjects.set(false);
+        this.projects.set(projects);
+      },
+      error: (err) => {
+        this.isLoadingProjects.set(false);
+
+        console.error('Error al traer los proyectos', err);
+        this.toastService.error('Ocurrio un error trayendo los proyectos');
+      },
+    });
   }
 
   onFormChanged = effect((onCleanup) => {
@@ -215,9 +255,9 @@ export class ProfileFormComponent {
         tap(() => this.localitiesByProvince.set([])),
         switchMap((province) => {
           if (!province) {
-            return [];
+            return of([]);
           }
-          return this.georefService.getLocalitiesByProvinceId(province);
+          return this.fetchLocalities(province!);
         })
       )
       .subscribe((localities) => {

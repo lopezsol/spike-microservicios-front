@@ -48,6 +48,7 @@
           [showClear]="true"
           formControlName="province"
           placeholder="Selecciona una provincia"
+          [loading]="isLoadingProvince()"
         >
           <ng-template let-province pTemplate="item">
             <div class="flex align-items-center gap-2">
@@ -57,7 +58,7 @@
         </p-select>
       </div>
 
-      <div class="grid grid-cols-1 gap-1">
+      <!-- <div class="grid grid-cols-1 gap-1">
         <label for="locality" class="text-primary">Localidad</label>
         <p-select
           [options]="localitiesByProvince()"
@@ -66,9 +67,36 @@
           optionValue="id"
           [showClear]="true"
           placeholder="Selecciona una localidad"
+          [editable]="true"
         >
           <ng-template let-locality pTemplate="item">
             <div class="flex align-items-center gap-2">
+              <div style="white-space: normal">{{ locality.nombre }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div> -->
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="locality" class="text-primary">Localidad</label>
+        <p-select
+          [options]="localitiesByProvince()"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="locality"
+          [filter]="true"
+          filterBy="nombre"
+          [showClear]="true"
+          placeholder="Selecciona una localidad"
+          [loading]="isLoadingLocality()"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div class="flex items-center gap-2">
+              <div>{{ selectedOption?.nombre }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-locality #item>
+            <div class="flex items-center gap-2">
               <div style="white-space: normal">{{ locality.nombre }}</div>
             </div>
           </ng-template>
@@ -84,6 +112,7 @@
           optionValue="id"
           [showClear]="true"
           placeholder="Selecciona un proyecto"
+          [loading]="isLoadingProjects()"
         >
           <ng-template let-project pTemplate="item">
             <div class="flex align-items-center gap-2">
@@ -131,4 +160,9 @@
   </section>
 
   <app-bottom-nav />
+  @if (isLoading()) {
+  <div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+    <p-progress-spinner ariaLabel="loading" />
+  </div>
+  }
 </div>
