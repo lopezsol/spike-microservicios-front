@@ -28,7 +28,7 @@ export class ProfilePageComponent {
 
   fetchUser() {
     //TODO:usuario harcodeado
-    this.userService.getUser(5).subscribe({
+    this.userService.getUser(1).subscribe({
       next: (user) => {
         this.isLoading.set(false);
         this.user.set(user);
