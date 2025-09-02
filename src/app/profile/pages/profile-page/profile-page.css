@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+button {
+  cursor: pointer;
+}
+
+.moby{
+  color: #0191c1;
+}

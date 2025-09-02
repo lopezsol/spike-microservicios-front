@@ -1,1 +1,168 @@
-<p>profile-form works!</p>,
+<div class="bg-container w-full py-10 min-h-screen pb-28">
+  <header class="relative w-full px-4 flex items-center justify-center">
+    <a
+      class="absolute left-4 top-1/2 -translate-y-1/2"
+      (click)="cancelEditMode.emit()"
+    >
+      <button type="button">
+        <i class="fa-solid fa-circle-left fa-xl" style="color: #0191c1"></i>
+      </button>
+    </a>
+    <h1 class="text-center text-gray-900 text-3xl font-bold leading-9">
+      Editá tu perfil
+    </h1>
+  </header>
+
+  <section class="container mx-auto pt-5 px-4">
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()"
+      class="grid grid-cols-1 gap-3 mx-auto lg:w-2/3"
+    >
+      <div class="grid grid-cols-1 gap-1">
+        <label for="firstName" class="text-primary">Nombre</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Ingresa tu nombre"
+          formControlName="firstName"
+          class=""
+        />
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <label for="lastName" class="text-primary">Apellido</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Ingresa tu apellido"
+          formControlName="lastName"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="province" class="text-primary">Provincia</label>
+        <p-select
+          [options]="provinces()"
+          optionLabel="nombre"
+          optionValue="id"
+          [showClear]="true"
+          formControlName="province"
+          placeholder="Selecciona una provincia"
+          [loading]="isLoadingProvince()"
+        >
+          <ng-template let-province pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div style="white-space: normal">{{ province.nombre }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+
+      <!-- <div class="grid grid-cols-1 gap-1">
+        <label for="locality" class="text-primary">Localidad</label>
+        <p-select
+          [options]="localitiesByProvince()"
+          formControlName="locality"
+          optionLabel="nombre"
+          optionValue="id"
+          [showClear]="true"
+          placeholder="Selecciona una localidad"
+          [editable]="true"
+        >
+          <ng-template let-locality pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div style="white-space: normal">{{ locality.nombre }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div> -->
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="locality" class="text-primary">Localidad</label>
+        <p-select
+          [options]="localitiesByProvince()"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="locality"
+          [filter]="true"
+          filterBy="nombre"
+          [showClear]="true"
+          placeholder="Selecciona una localidad"
+          [loading]="isLoadingLocality()"
+        >
+          <ng-template #selectedItem let-selectedOption>
+            <div class="flex items-center gap-2">
+              <div>{{ selectedOption?.nombre }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-locality #item>
+            <div class="flex items-center gap-2">
+              <div style="white-space: normal">{{ locality.nombre }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="project" class="text-primary">Proyecto</label>
+        <p-select
+          [options]="projects()"
+          formControlName="project"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          placeholder="Selecciona un proyecto"
+          [loading]="isLoadingProjects()"
+        >
+          <ng-template let-project pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div style="white-space: normal">{{ project.name }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="technology" class="text-primary">Tecnología Actual</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Ingresa tu tecnología actual"
+          formControlName="technology"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="talent_partner" class="text-primary">Talent Partner</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Ingresa el nombre y apellido de tu talent partner"
+          formControlName="talent_partner"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <label for="referent" class="text-primary">Referente</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Ingresa el nombre y apellido de tu referente"
+          formControlName="referent"
+        />
+      </div>
+
+      <button pButton class="mt-3 hover:bg-moby!">
+        <i class="fa-solid fa-arrow-down"></i>
+        <span pButtonLabel class="text-lg">Guardar</span>
+      </button>
+    </form>
+  </section>
+
+  <app-bottom-nav />
+  @if (isLoading()) {
+  <div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+    <p-progress-spinner ariaLabel="loading" />
+  </div>
+  }
+</div>
