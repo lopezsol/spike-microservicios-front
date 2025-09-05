@@ -191,7 +191,6 @@ export class ProfileFormComponent {
 
     if (selectedProject) {
       if (userProjects.includes(selectedProject)) {
-        // Eliminarlo si ya existe
         userProjects = userProjects.filter(
           (projectId) => projectId !== selectedProject
         );
