@@ -187,14 +187,20 @@ export class ProfileFormComponent {
 
   getProjectsId() {
     const selectedProject = this.profileForm.get('project')?.value;
-    const userProjects =
-      this.user().projects?.map((project) => project.id) || [];
-    if (selectedProject && !userProjects.includes(selectedProject)) {
+    let userProjects = this.user().projects?.map((project) => project.id) || [];
+
+    if (selectedProject) {
+      if (userProjects.includes(selectedProject)) {
+        // Eliminarlo si ya existe
+        userProjects = userProjects.filter(
+          (projectId) => projectId !== selectedProject
+        );
+      }
       userProjects.push(selectedProject);
     }
-
     return userProjects;
   }
+
   fetchProvinces() {
     this.isLoadingProvince.set(true);
     this.georefService.getAllProvinces().subscribe({
